@@ -1,3 +1,7 @@
+# Local Compose image. Build context MUST be the repository root
+# (docker-compose.yml: context: ., dockerfile: backend/Dockerfile).
+# Render / GitHub deploys use the repository-root Dockerfile, which also
+# materializes the gitignored ML artifacts during the image build.
 FROM python:3.12-slim
 
 # libgomp is required by XGBoost / SHAP at import time even though this image
