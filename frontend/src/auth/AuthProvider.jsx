@@ -2,6 +2,7 @@
 // Auth0 Universal Login is the only identity source. This file never stores
 // passwords and never invents a session when the tenant is unconfigured.
 import { createContext, useCallback, useContext, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import {
   authCallbackUrl,
@@ -170,6 +171,7 @@ function Auth0Bridge({ children, config }) {
 
 export default function AuthProvider({ children }) {
   const config = readAuthConfig();
+  const navigate = useNavigate();
 
   if (!config.configured) {
     return <AuthContext.Provider value={{ ...unconfiguredValue, config }}>{children}</AuthContext.Provider>;
@@ -178,6 +180,8 @@ export default function AuthProvider({ children }) {
   // 2. AUTH0 PROVIDER SETUP
   // Audience is VITE_AUTH0_AUDIENCE so Auth0 mints an API access token for
   // FastAPI. Domain and client ID are also env-only; no client secret here.
+  // localStorage keeps the refresh token across reloads; memory cache dies on
+  // refresh and silent iframe auth is blocked as a third-party cookie on Vercel.
   return (
     <Auth0Provider
       domain={config.domain}
@@ -187,11 +191,10 @@ export default function AuthProvider({ children }) {
         audience: config.audience || undefined,
         scope: "openid profile email",
       }}
-      cacheLocation="memory"
+      cacheLocation="localstorage"
       useRefreshTokens
       onRedirectCallback={(appState) => {
-        const target = appState?.returnTo || "/";
-        window.history.replaceState({}, document.title, target);
+        navigate(appState?.returnTo || "/", { replace: true });
       }}
     >
       <Auth0Bridge config={config}>{children}</Auth0Bridge>
