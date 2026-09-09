@@ -1,0 +1,9 @@
+# Agent layer dependencies.
+# Versions match backend/requirements.txt, because the agent runs inside the
+# backend process. It needs no ML libraries of its own: evidence arrives from the
+# ml package (see ml/requirements.txt).
+
+pydantic==2.10.3
+pydantic-settings==2.6.1
+httpx==0.28.1
+pytest==8.3.4

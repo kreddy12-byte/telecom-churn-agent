@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #1b2430;
+  background-color: #eef1f5;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", "Helvetica Neue", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid #1f4e79;
+  outline-offset: 2px;
+}
+
+@layer components {
+  .surface {
+    @apply bg-paper-raised border border-line shadow-card rounded-panel;
+  }
+
+  .page-title {
+    @apply text-[1.35rem] font-semibold tracking-tight text-ink;
+  }
+
+  .section-title {
+    @apply text-[11px] font-semibold tracking-[0.08em] text-ink-faint uppercase;
+  }
+
+  .muted {
+    @apply text-sm text-ink-muted;
+  }
+
+  .field-input {
+    @apply w-full border border-line bg-white px-2.5 py-1.5 text-sm text-ink rounded-panel;
+  }
+
+  .data-table {
+    @apply min-w-full text-left text-sm;
+  }
+
+  .data-table thead {
+    @apply border-b border-line bg-slate-50 text-[11px] font-semibold uppercase tracking-[0.06em] text-ink-muted;
+  }
+
+  .data-table th {
+    @apply px-4 py-2.5 font-semibold;
+  }
+
+  .data-table td {
+    @apply px-4 py-2.5 align-middle;
+  }
+
+  .data-table tbody tr {
+    @apply border-b border-line last:border-0 hover:bg-slate-50;
+  }
+}

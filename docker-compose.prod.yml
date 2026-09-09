@@ -1,0 +1,18 @@
+# Production-shaped overlay: PostgreSQL is not published on the host.
+# Requires Docker Compose 2.24+ (`!reset`).
+#
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+#
+# Set POSTGRES_* and DATABASE_URL from the environment. Do not use the
+# local development password defaults.
+
+services:
+  db:
+    ports: !reset []
+
+  backend:
+    environment:
+      APP_ENV: production
+    command: >
+      sh -c "alembic upgrade head &&
+             uvicorn app.main:app --host 0.0.0.0 --port 8000"

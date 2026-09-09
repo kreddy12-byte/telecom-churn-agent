@@ -1,0 +1,25 @@
+# HTTP / application
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+pydantic==2.10.3
+pydantic-settings==2.6.1
+python-dotenv==1.0.1
+httpx==0.28.1
+
+# Persistence
+sqlalchemy==2.0.36
+psycopg[binary]==3.2.3
+psycopg2-binary==2.9.10
+alembic==1.14.0
+
+# Auth — JWT validation against Auth0 JWKS. No client secret on the API.
+PyJWT[crypto]==2.10.1
+
+# Tests
+pytest==8.3.4
+
+# Inference-time ML and agent libraries are NOT duplicated here. Install them
+# from the locked requirement files into the same environment:
+#   pip install -r ml/requirements.txt
+#   pip install -r agent/requirements.txt
+# The Docker image installs all three. Do not bump those pins from this file.

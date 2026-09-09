@@ -1,0 +1,74 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+.coverage.*
+
+# Node / frontend
+node_modules/
+dist/
+build/
+frontend/dist/
+frontend/.vite/
+*.local
+
+# Environment & secrets — never commit real secrets
+.env
+.env.*
+!.env.example
+!backend/.env.example
+!frontend/.env.example
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ML data — raw datasets are downloaded, never committed
+ml/data/*
+!ml/data/.gitkeep
+!ml/data/raw/
+ml/data/raw/*
+!ml/data/raw/.gitkeep
+*.csv
+!ml/models/model_comparison.csv
+!ml/models/global_feature_importance.csv
+
+# ML artifacts — binaries and generated plots stay out; small reports stay in
+ml/models/*
+!ml/models/.gitkeep
+!ml/models/model_comparison.csv
+!ml/models/model_comparison.json
+!ml/models/model_metadata.json
+!ml/models/global_feature_importance.csv
+ml/models/explanations/
+*.joblib
+*.pkl
+*.pickle
+*.h5
+
+# Logs & temp
+*.log
+logs/
+tmp/
+temp/
+*.db
+*.sqlite
+*.sqlite3
+
+# Docker volumes
+postgres_data/

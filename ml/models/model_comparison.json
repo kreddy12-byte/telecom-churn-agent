@@ -1,0 +1,163 @@
+{
+  "dataset": "IBM Telco Customer Churn",
+  "random_state": 42,
+  "test_size": 0.2,
+  "cv_folds": 5,
+  "selection_weights": {
+    "f1": 0.45,
+    "recall": 0.35,
+    "roc_auc": 0.2
+  },
+  "models": [
+    {
+      "model_name": "LogisticRegression",
+      "accuracy": 0.7381121362668559,
+      "precision": 0.504302925989673,
+      "recall": 0.7834224598930482,
+      "f1": 0.6136125654450262,
+      "roc_auc": 0.8416388953473353,
+      "confusion_matrix": {
+        "true_negatives": 747,
+        "false_positives": 288,
+        "false_negatives": 81,
+        "true_positives": 293
+      },
+      "train_time_seconds": 0.0598,
+      "inference_time_seconds": 0.0102,
+      "cv_f1_mean": 0.6282570726199064,
+      "cv_f1_std": 0.023165361233898393,
+      "cv_recall_mean": 0.8013377926421403,
+      "cv_roc_auc_mean": 0.8459527189246974,
+      "selection_score": 0.7323744538886464,
+      "notes": []
+    },
+    {
+      "model_name": "DecisionTree",
+      "accuracy": 0.7395315826827538,
+      "precision": 0.505982905982906,
+      "recall": 0.7914438502673797,
+      "f1": 0.6173096976016684,
+      "roc_auc": 0.8335761709163243,
+      "confusion_matrix": {
+        "true_negatives": 746,
+        "false_positives": 289,
+        "false_negatives": 78,
+        "true_positives": 296
+      },
+      "train_time_seconds": 0.0553,
+      "inference_time_seconds": 0.0088,
+      "cv_f1_mean": 0.6128597397865352,
+      "cv_f1_std": 0.02085513382606832,
+      "cv_recall_mean": 0.7872909698996656,
+      "cv_roc_auc_mean": 0.8252428050391059,
+      "selection_score": 0.7163872833766449,
+      "notes": []
+    },
+    {
+      "model_name": "RandomForest",
+      "accuracy": 0.7721788502484032,
+      "precision": 0.5524752475247525,
+      "recall": 0.7459893048128342,
+      "f1": 0.6348122866894198,
+      "roc_auc": 0.8411725955204215,
+      "confusion_matrix": {
+        "true_negatives": 809,
+        "false_positives": 226,
+        "false_negatives": 95,
+        "true_positives": 279
+      },
+      "train_time_seconds": 0.798,
+      "inference_time_seconds": 0.0787,
+      "cv_f1_mean": 0.6320468134065822,
+      "cv_f1_std": 0.01554760664493696,
+      "cv_recall_mean": 0.731772575250836,
+      "cv_roc_auc_mean": 0.8456326996520558,
+      "selection_score": 0.7096680073011659,
+      "notes": []
+    },
+    {
+      "model_name": "KNeighbors",
+      "accuracy": 0.7778566359119943,
+      "precision": 0.5873925501432665,
+      "recall": 0.5481283422459893,
+      "f1": 0.5670816044260027,
+      "roc_auc": 0.8078495957012581,
+      "confusion_matrix": {
+        "true_negatives": 891,
+        "false_positives": 144,
+        "false_negatives": 169,
+        "true_positives": 205
+      },
+      "train_time_seconds": 0.0394,
+      "inference_time_seconds": 0.0501,
+      "cv_f1_mean": 0.5793859199010811,
+      "cv_f1_std": 0.013902932367155717,
+      "cv_recall_mean": 0.5638795986622073,
+      "cv_roc_auc_mean": 0.8142690272253021,
+      "selection_score": 0.6209353289323195,
+      "notes": [
+        "Estimator does not support class weighting; trained on the natural class ratio."
+      ]
+    },
+    {
+      "model_name": "GaussianNB",
+      "accuracy": 0.694819020581973,
+      "precision": 0.45894428152492667,
+      "recall": 0.8368983957219251,
+      "f1": 0.5928030303030303,
+      "roc_auc": 0.8074297966881089,
+      "confusion_matrix": {
+        "true_negatives": 666,
+        "false_positives": 369,
+        "false_negatives": 61,
+        "true_positives": 313
+      },
+      "train_time_seconds": 0.0709,
+      "inference_time_seconds": 0.0168,
+      "cv_f1_mean": 0.5974059607098476,
+      "cv_f1_std": 0.009342925962355551,
+      "cv_recall_mean": 0.8481605351170568,
+      "cv_roc_auc_mean": 0.821208078786202,
+      "selection_score": 0.7299304853676417,
+      "notes": [
+        "Estimator does not support class weighting; trained on the natural class ratio."
+      ]
+    },
+    {
+      "model_name": "XGBoost",
+      "accuracy": 0.7565649396735273,
+      "precision": 0.5289719626168224,
+      "recall": 0.7566844919786097,
+      "f1": 0.6226622662266227,
+      "roc_auc": 0.8352127412229714,
+      "confusion_matrix": {
+        "true_negatives": 783,
+        "false_positives": 252,
+        "false_negatives": 91,
+        "true_positives": 283
+      },
+      "train_time_seconds": 0.353,
+      "inference_time_seconds": 0.0181,
+      "cv_f1_mean": 0.627396290716832,
+      "cv_f1_std": 0.01604675021561088,
+      "cv_recall_mean": 0.7518394648829432,
+      "cv_roc_auc_mean": 0.839038975306899,
+      "selection_score": 0.7132799385929843,
+      "notes": []
+    }
+  ],
+  "selected_model": "LogisticRegression",
+  "selection_reason": "LogisticRegression achieved the highest weighted selection score (0.7324) computed as 0.45*F1 + 0.35*Recall + 0.2*ROC_AUC over 5-fold cross-validation on the training split (F1=0.6283, Recall=0.8013, ROC_AUC=0.8460). Recall and F1 dominate the score because a missed churner is more costly than an unnecessary retention offer; accuracy was deliberately excluded because the majority class is ~73% of the data. On the untouched test set this model scores F1=0.6136, Recall=0.7834, ROC_AUC=0.8416, Accuracy=0.7381. Runner-up was GaussianNB (score=0.7299).",
+  "class_balance": {
+    "negative_count": 5174,
+    "positive_count": 1869,
+    "positive_rate": 0.2654,
+    "imbalance_ratio_negative_to_positive": 2.7683
+  },
+  "validation_warnings": [
+    "11 non-numeric values in 'TotalCharges' will be coerced to NaN and imputed using training-set statistics."
+  ],
+  "cleaning_notes": [
+    "Set TotalCharges=0.0 for 11 rows with tenure=0 (never billed)."
+  ]
+}
