@@ -10,6 +10,7 @@ Usage::
 
     python -m app.db.seed
     python -m app.db.seed --limit 100      # smaller local dataset
+    python -m app.db.seed --if-empty       # production boot: skip when rows exist
 """
 
 from __future__ import annotations
@@ -82,10 +83,37 @@ def seed_customers(session: Session, limit: int | None = None) -> tuple[int, int
     return inserted, updated
 
 
+def maybe_seed_customers(
+    session: Session,
+    *,
+    limit: int | None = None,
+    if_empty: bool = False,
+) -> tuple[int, int, bool]:
+    """Run :func:`seed_customers`, or skip when ``if_empty`` and rows already exist.
+
+    Skip does not load the CSV and does not write customers, predictions, or
+    actions. Returns ``(inserted, updated, skipped)``.
+    """
+    if if_empty:
+        existing = customer_repository.count_customers(session)
+        if existing > 0:
+            message = f"Customers already present ({existing}); skipping seed."
+            logger.info(message)
+            print(message)
+            return 0, 0, True
+    inserted, updated = seed_customers(session, limit=limit)
+    return inserted, updated, False
+
+
 def main() -> int:  # pragma: no cover - CLI entrypoint
     configure_logging()
     parser = argparse.ArgumentParser(description="Seed customers from the Telco dataset.")
     parser.add_argument("--limit", type=int, default=None, help="Seed only the first N rows.")
+    parser.add_argument(
+        "--if-empty",
+        action="store_true",
+        help="Insert only when the customers table has no rows. Skip otherwise.",
+    )
     args = parser.parse_args()
 
     settings = get_settings()
@@ -95,7 +123,12 @@ def main() -> int:  # pragma: no cover - CLI entrypoint
         create_tables()
 
     with get_session_factory()() as session:
-        inserted, updated = seed_customers(session, limit=args.limit)
+        inserted, updated, skipped = maybe_seed_customers(
+            session, limit=args.limit, if_empty=args.if_empty
+        )
+
+    if skipped:
+        return 0
 
     print(f"Customers inserted: {inserted}")
     print(f"Customers updated : {updated}")

@@ -1,0 +1,2 @@
+# Keep container entrypoints as LF so `sh scripts/start.sh` runs on Linux.
+backend/scripts/*.sh text eol=lf

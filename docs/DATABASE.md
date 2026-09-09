@@ -94,11 +94,14 @@ password in `alembic.ini`.
 cd backend
 python -m app.db.seed
 python -m app.db.seed --limit 100
+python -m app.db.seed --if-empty   # skip when customers already exist
 ```
 
-- Reads the Telco CSV from disk; does **not** store the file
+- Reads the Telco CSV from disk; does **not** store the file in PostgreSQL
 - Upserts on `customer_id` — a second run updates, it does not duplicate
+- `--if-empty` inserts only when the table has zero rows (Render startup)
 - Does not load the churn label (training ground truth, not a customer attribute)
+- Does not write or delete `predictions` or `actions`
 
 ---
 
@@ -121,7 +124,12 @@ docker compose up --build
 
 Services: `db` (Postgres 16), `backend` (Alembic then uvicorn), `frontend`
 (nginx on port 8080, proxies `/api` and `/health`). PostgreSQL is bound to
-`127.0.0.1:5432` only.
+`127.0.0.1:5432` only. Seed locally with `docker compose exec backend python -m app.db.seed`.
+
+The Render production image (`Dockerfile` at the repo root) starts with
+`scripts/start.sh`: `alembic upgrade head`, then `python -m app.db.seed --if-empty`,
+then Uvicorn. The Telco CSV is left in the image so that first boot can fill
+an empty `customers` table. Later deploys skip seed when rows already exist.
 
 Production-shaped overlay (no host port for Postgres):
 
@@ -139,6 +147,7 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
 | `DATABASE_URL is not set` | Copy `backend/.env.example` to `backend/.env` |
 | `503 database_unavailable` | Postgres down, wrong host, or SSL required (`DB_SSLMODE=require`) |
 | Seed inserts 0, updates 7043 | Already seeded; this is the idempotent path |
+| Render batch `processed: 0` | `customers` empty — first-boot seed failed or CSV missing from the image |
 | Alembic `Can't locate revision` | Run commands from `backend/` |
 
 ---
@@ -146,7 +155,7 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build
 ## Production requirements
 
 1. PostgreSQL (16+ recommended), not SQLite
-2. `alembic upgrade head` before traffic
+2. `alembic upgrade head` before traffic (the Render start script does this)
 3. `DB_SSLMODE=require` (or `verify-full`) on managed providers
 4. Do not publish `5432` on a public interface
 5. Credentials only in the environment — no secret manager in this phase

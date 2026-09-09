@@ -114,12 +114,14 @@ alembic upgrade head          # production and shared PostgreSQL
 python -m app.db.init_db      # development/testing convenience only
 python -m app.db.seed              # all ~7,043 Telco customers
 python -m app.db.seed --limit 100  # smaller local set
+python -m app.db.seed --if-empty   # no-op when customers already exist
 ```
 
-The CSV is never stored. Seeding is idempotent: `customer_id` is the primary
-key, so a second run updates existing rows instead of inserting duplicates.
-The churn label is not loaded — it is training ground truth, not a customer
-attribute.
+The CSV is never stored in PostgreSQL. Seeding is idempotent: `customer_id` is the
+primary key, so a second run updates existing rows instead of inserting
+duplicates. `--if-empty` skips entirely when the table is not empty and does
+not modify predictions or actions. The churn label is not loaded — it is
+training ground truth, not a customer attribute.
 
 ---
 
@@ -340,6 +342,10 @@ docker compose up --build
 
 The backend container runs `alembic upgrade head` before uvicorn. Seed
 separately: `docker compose exec backend python -m app.db.seed`.
+
+The Render production `Dockerfile` keeps the Telco CSV and starts via
+`backend/scripts/start.sh` (`alembic upgrade head`, then
+`python -m app.db.seed --if-empty`, then Uvicorn).
 
 `GET /health` does not require Postgres. `GET /readiness` and endpoints that
 read or write data return `503 database_unavailable` if the database is down,

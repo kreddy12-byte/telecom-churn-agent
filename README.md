@@ -127,6 +127,8 @@ docker compose up --build
 
 API http://127.0.0.1:8000, UI http://127.0.0.1:8080. For a production-shaped overlay that does not publish Postgres on the host: `docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build`.
 
+The Render image (`Dockerfile`) keeps the Telco CSV, then on start runs Alembic, `python -m app.db.seed --if-empty`, and Uvicorn. Local Compose still seeds only when you run `python -m app.db.seed` (or `docker compose exec backend python -m app.db.seed`).
+
 ---
 
 ## Environment variables
@@ -177,8 +179,8 @@ ML tests that need the trained model skip automatically if artifacts are missing
 
 Not deployed from this audit.
 
-1. Train or supply `ml/models/*.joblib` (not stored in git).
-2. Run PostgreSQL; set `DATABASE_URL`; `alembic upgrade head`; seed if needed.
+1. Train or supply `ml/models/*.joblib` (not stored in git). The Render image trains during build.
+2. Run PostgreSQL; set `DATABASE_URL`. The Render container runs `alembic upgrade head` then `python -m app.db.seed --if-empty` before Uvicorn.
 3. Set backend Auth0 domain/audience and CORS origins. `APP_ENV=production` refuses SQLite.
 4. Build the frontend with public `VITE_AUTH0_*` values. Do not bake a client secret.
 5. Optional LLM: set `LLM_PROVIDER` and `LLM_API_KEY` on the backend only.

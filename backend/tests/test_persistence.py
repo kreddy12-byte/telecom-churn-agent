@@ -107,3 +107,52 @@ def test_customer_round_trip_preserves_model_feature_names(db_session) -> None:
     assert record["Contract"] == "Month-to-month"
     assert record["MonthlyCharges"] == 29.85
     assert "monthly_charges" not in record
+
+
+def test_seed_if_empty_skips_when_customers_exist_and_leaves_history(db_session, monkeypatch) -> None:
+    db_session.add(build_customer("KEEP-00001"))
+    db_session.commit()
+    prediction_repository.create_prediction(
+        db_session, "KEEP-00001", 0.81, "HIGH", "1.0.0"
+    )
+    action = action_repository.create_action(
+        db_session,
+        customer_id="KEEP-00001",
+        strategy_id="CONTRACT_CONVERSION",
+        recommendation="Keep this note.",
+    )
+    db_session.commit()
+
+    def _must_not_load(_limit=None):
+        raise AssertionError("if-empty skip must not load the Telco CSV")
+
+    monkeypatch.setattr("app.db.seed.load_customer_records", _must_not_load)
+
+    from app.db.seed import maybe_seed_customers
+
+    inserted, updated, skipped = maybe_seed_customers(db_session, if_empty=True)
+    assert skipped is True
+    assert inserted == 0
+    assert updated == 0
+    assert customer_repository.count_customers(db_session) == 1
+    assert prediction_repository.count_predictions(db_session, "KEEP-00001") == 1
+    kept = action_repository.get_action(db_session, action.id)
+    assert kept is not None
+    assert kept.recommendation == "Keep this note."
+    assert action_repository.count_actions(db_session, customer_id="KEEP-00001") == 1
+
+
+def test_seed_if_empty_inserts_when_customers_table_is_empty(db_session, monkeypatch) -> None:
+    assert customer_repository.count_customers(db_session) == 0
+    records = [_dataset_record("NEW-00001", tenure=3), _dataset_record("NEW-00002", tenure=4)]
+    monkeypatch.setattr("app.db.seed.load_customer_records", lambda limit=None: records)
+
+    from app.db.seed import maybe_seed_customers
+
+    inserted, updated, skipped = maybe_seed_customers(db_session, if_empty=True)
+    assert skipped is False
+    assert inserted == 2
+    assert updated == 0
+    assert customer_repository.count_customers(db_session) == 2
+    assert customer_repository.get_customer(db_session, "NEW-00001") is not None
+    assert prediction_repository.count_predictions(db_session, "NEW-00001") == 0

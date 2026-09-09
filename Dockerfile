@@ -35,17 +35,18 @@ COPY ml ml
 COPY agent agent
 
 # --- Model artifacts ---
-# GitHub never contains *.joblib. Train the existing locked pipeline, cache
-# shap_background.joblib so explanations do not need the raw CSV, then drop
-# the downloaded dataset from the image.
+# GitHub never contains *.joblib. Train the locked pipeline during build so
+# prediction and SHAP work without a host volume. Keep the Telco CSV in the
+# image so production startup can seed `customers` when the table is empty.
 RUN python -m ml.src.training.train \
-    && python -m ml.src.explainability.global_importance --no-plots \
-    && rm -f ml/data/raw/telco_customer_churn.csv
+    && python -m ml.src.explainability.global_importance --no-plots
 
 WORKDIR /workspace/backend
 
+RUN chmod +x scripts/start.sh
+
 EXPOSE 8000
 
-# Render injects PORT (default 10000). Local docker run without PORT stays on 8000.
-# Migrations run before serve; DATABASE_URL must be provided at runtime.
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Migrations, then seed only if customers is empty, then serve.
+# DATABASE_URL must be provided at runtime. Render injects PORT (default 10000).
+CMD ["sh", "scripts/start.sh"]
