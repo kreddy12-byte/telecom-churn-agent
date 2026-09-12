@@ -55,8 +55,8 @@ describe("LoginPage", () => {
 
   it("renders Sign in with Auth0 and Sign up without a local password form", async () => {
     renderLogin();
-    expect(screen.getAllByText("Retention Intelligence").length).toBeGreaterThan(0);
-    expect(screen.getByText("Telecom Customer Churn Decision Support")).toBeInTheDocument();
+    expect(screen.getAllByText("Churn Intelligence").length).toBeGreaterThan(0);
+    expect(screen.getByText("AI-powered customer risk platform")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Sign in with Auth0" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Sign up" })).toBeEnabled();
     expect(screen.queryByLabelText(/password/i)).not.toBeInTheDocument();

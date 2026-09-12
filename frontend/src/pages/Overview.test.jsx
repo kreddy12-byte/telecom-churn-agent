@@ -132,10 +132,10 @@ describe("Churn Intelligence dashboard", () => {
 
   it("renders the dashboard title and summary cards", async () => {
     renderDashboard();
-    expect(await screen.findByRole("heading", { name: "Overview" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "Customer Retention Overview" })).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Here are the customers most likely to churn, and here is where you investigate and decide what to do."
+        "Summarize churn risk across the customer base, surface priority accounts, and move from prediction to retention decisions."
       )
     ).toBeInTheDocument();
     expect(screen.getByText("Total customers")).toBeInTheDocument();
@@ -192,7 +192,7 @@ describe("Churn Intelligence dashboard", () => {
       await screen.findByRole("heading", { name: "Churn Probability Distribution" })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("img", { name: "Churn probability distribution histogram" })
+      await screen.findByRole("img", { name: "Churn probability distribution histogram" })
     ).toBeInTheDocument();
     expect(getPredictionDistribution).toHaveBeenCalled();
     expect(screen.queryByText("90-100% risk")).not.toBeInTheDocument();

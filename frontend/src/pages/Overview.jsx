@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import PageHeader from "../components/common/PageHeader";
 import ErrorBanner from "../components/common/ErrorBanner";
@@ -7,13 +7,16 @@ import MetricCard from "../components/common/MetricCard";
 import SectionCard from "../components/common/SectionCard";
 import WorkflowStrip from "../components/common/WorkflowStrip";
 import Button from "../components/common/Button";
+import {
+  ChartSkeleton,
+  KpiSkeleton,
+  TableSkeleton,
+} from "../components/common/Skeleton";
 import { PriorityRankingTable } from "../components/customers/CustomerTable";
 import {
   RiskDistributionChart,
   RiskPriorityPanel,
 } from "../components/dashboard/RiskOverview";
-import ProbabilityDistributionChart from "../components/dashboard/ProbabilityDistributionChart";
-import ChurnDriversChart from "../components/dashboard/ChurnDriversChart";
 import RetentionPriorityPanel from "../components/dashboard/RetentionPriorityPanel";
 import {
   getGlobalImportance,
@@ -24,6 +27,13 @@ import {
   runBatchPredictions,
 } from "../services/api";
 import { formatCount, formatDate, formatPercent } from "../utils/format";
+
+const ProbabilityDistributionChart = lazy(() =>
+  import("../components/dashboard/ProbabilityDistributionChart")
+);
+const ChurnDriversChart = lazy(() =>
+  import("../components/dashboard/ChurnDriversChart")
+);
 
 const RANKING_UNAVAILABLE =
   "High-risk ranking is not available. Open the customer list to continue review.";
@@ -44,11 +54,6 @@ export default function Overview() {
   const [batchNotice, setBatchNotice] = useState(null);
   const scoringRef = useRef(false);
 
-  // 1. LOAD DASHBOARD DATA
-  // Overview + summary are required for the executive cards. Ranking, the
-  // probability histogram, and global SHAP drivers load independently so one
-  // visualization outage cannot blank the page. Batch scoring is never started
-  // here — only the explicit reviewer click below may call POST /predictions/batch.
   function loadDashboard() {
     setError(null);
     setSectionErrors({});
@@ -83,8 +88,6 @@ export default function Overview() {
         setSectionErrors((current) => ({ ...current, drivers: DRIVERS_UNAVAILABLE }));
       });
 
-    // Optional section failures are swallowed above so a histogram outage
-    // cannot reject this promise and blank the executive cards.
     return Promise.all([core, rankingLoad, distributionLoad, driversLoad]);
   }
 
@@ -123,11 +126,12 @@ export default function Overview() {
   const latestScoredAt =
     batchNotice?.scoredAt || ranking?.items?.[0]?.predicted_at || null;
   const scoredTotal = summary?.total_scored ?? 0;
+  const pendingReviews = overview?.action_counts?.PENDING;
 
   const header = (
     <PageHeader
-      title="Overview"
-      description="Here are the customers most likely to churn, and here is where you investigate and decide what to do."
+      title="Customer Retention Overview"
+      description="Summarize churn risk across the customer base, surface priority accounts, and move from prediction to retention decisions."
       actions={
         <Button
           variant="primary"
@@ -143,7 +147,7 @@ export default function Overview() {
 
   if (error && (!overview || !summary)) {
     return (
-      <div>
+      <div className="space-y-5">
         {header}
         <ErrorBanner message={error} onRetry={loadDashboard} />
       </div>
@@ -152,32 +156,41 @@ export default function Overview() {
 
   if (!overview || !summary) {
     return (
-      <div>
+      <div className="space-y-5">
         {header}
         <p className="muted" role="status">
           Loading churn intelligence...
         </p>
+        <KpiSkeleton count={3} />
+        <div className="grid gap-4 lg:grid-cols-2">
+          <ChartSkeleton />
+          <ChartSkeleton className="h-40" />
+        </div>
+        <TableSkeleton rows={5} />
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {header}
-      <WorkflowStrip current="Predict" />
-      <p className="text-sm text-ink-muted">
-        Review the high-risk priority queue, then open a customer to explain
-        the prediction, recommend a retention action, simulate interventions,
-        and record a human decision.
-      </p>
+
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <WorkflowStrip current="Predict" />
+        <p className="max-w-xl text-sm leading-6 text-ink-muted">
+          Review the high-risk priority queue, then open a customer to explain
+          the prediction, recommend a retention action, simulate interventions,
+          and record a human decision.
+        </p>
+      </div>
 
       {batchNotice ? (
         <div
           role="status"
           className={
             batchNotice.tone === "err"
-              ? "rounded-panel border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900"
-              : "rounded-panel border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900"
+              ? "rounded-panel border border-danger/35 bg-danger-soft px-4 py-3 text-sm text-danger ri-enter"
+              : "rounded-panel border border-success/35 bg-success-soft px-4 py-3 text-sm text-success ri-enter"
           }
         >
           {batchNotice.text}
@@ -186,11 +199,17 @@ export default function Overview() {
 
       {error ? <ErrorBanner message={error} onRetry={loadDashboard} /> : null}
 
-      {/* 2. BUILD RISK SUMMARY */}
-      <section aria-labelledby="executive-summary-heading">
-        <h2 id="executive-summary-heading" className="section-title mb-3">
-          Executive summary
-        </h2>
+      <section aria-labelledby="executive-summary-heading" className="space-y-3 ri-enter">
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <h2 id="executive-summary-heading" className="section-title">
+            Executive summary
+          </h2>
+          {latestScoredAt ? (
+            <p className="text-xs text-ink-faint">
+              Latest scores recorded {formatDate(latestScoredAt)}
+            </p>
+          ) : null}
+        </div>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           <MetricCard
             label="Total customers"
@@ -226,6 +245,13 @@ export default function Overview() {
                 value={formatPercent(summary.average_churn_probability)}
                 hint="Predicted likelihood of churn, not model accuracy or ROC-AUC."
               />
+              {pendingReviews != null ? (
+                <MetricCard
+                  label="Pending reviews"
+                  value={formatCount(pendingReviews)}
+                  hint="Retention decisions awaiting reviewer approval."
+                />
+              ) : null}
             </>
           ) : null}
         </div>
@@ -260,6 +286,7 @@ export default function Overview() {
       {hasScores ? (
         <div className="grid gap-4 lg:grid-cols-2">
           <SectionCard
+            kicker="Risk"
             title="Customer Risk Distribution"
             description="Share of scored customers in each predicted risk band. Latest prediction per customer."
           >
@@ -269,6 +296,7 @@ export default function Overview() {
             />
           </SectionCard>
           <SectionCard
+            kicker="Priority"
             title="Risk priority"
             description="Use the HIGH band to order investigation, not to assume every customer will leave."
           >
@@ -277,38 +305,38 @@ export default function Overview() {
         </div>
       ) : null}
 
-      {/* 3. BUILD CHART DATA — histogram buckets come from SQL aggregation. */}
       {hasScores ? (
         <SectionCard
+          kicker="Probability"
           title="Churn Probability Distribution"
           description="Counts of latest predicted probabilities in 10-point bands. This uses stored scores, not risk labels."
         >
           {sectionErrors.distribution ? (
             <p className="muted">{sectionErrors.distribution}</p>
           ) : !distribution ? (
-            <p className="muted" role="status">
-              Loading probability distribution...
-            </p>
+            <ChartSkeleton />
           ) : (
-            <ProbabilityDistributionChart buckets={distribution.buckets} />
+            <Suspense fallback={<ChartSkeleton />}>
+              <ProbabilityDistributionChart buckets={distribution.buckets} />
+            </Suspense>
           )}
         </SectionCard>
       ) : null}
 
-      {/* 4. RENDER PRIORITY QUEUE */}
       {hasScores ? (
         <SectionCard
+          kicker="Priority queue"
           title="Top High-Risk Customers"
           description="Customers with the highest predicted churn probability. Open one to view intelligence and decide what to do."
           actions={
             <div className="flex flex-wrap gap-3 text-sm">
               <Link
                 to="/customers?risk_level=HIGH"
-                className="text-accent hover:underline"
+                className="font-medium text-accent hover:underline"
               >
                 View high-risk customers
               </Link>
-              <Link to="/customers" className="text-accent hover:underline">
+              <Link to="/customers" className="font-medium text-accent hover:underline">
                 View all customers
               </Link>
             </div>
@@ -317,11 +345,11 @@ export default function Overview() {
           {sectionErrors.ranking ? (
             <p className="muted">{sectionErrors.ranking}</p>
           ) : !ranking ? (
-            <p className="muted" role="status">
-              Loading priority customers...
-            </p>
+            <TableSkeleton rows={5} />
           ) : ranking.items?.length ? (
-            <PriorityRankingTable items={ranking.items} />
+            <div className="ri-enter">
+              <PriorityRankingTable items={ranking.items} />
+            </div>
           ) : (
             <p className="muted">
               No high-risk customers in the latest scores. Review the full
@@ -333,24 +361,27 @@ export default function Overview() {
 
       {hasScores ? (
         <SectionCard
+          kicker="Model signals"
           title="Top Churn Drivers"
           description="Stored global SHAP ranking from the trained model. Not recomputed on this page."
         >
           {sectionErrors.drivers ? (
             <p className="muted">{sectionErrors.drivers}</p>
           ) : !drivers ? (
-            <p className="muted" role="status">
-              Loading churn drivers...
-            </p>
+            <ChartSkeleton />
           ) : (
-            <ChurnDriversChart drivers={drivers.drivers} />
+            <Suspense fallback={<ChartSkeleton />}>
+              <ChurnDriversChart drivers={drivers.drivers} />
+            </Suspense>
           )}
         </SectionCard>
       ) : null}
 
       <SectionCard
+        kicker="Workflow"
         title="Retention Priority"
         description="Predicted risk orders investigation. The model does not execute retention actions."
+        elevated
       >
         <RetentionPriorityPanel />
       </SectionCard>

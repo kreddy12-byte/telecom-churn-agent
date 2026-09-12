@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import IconButton from "./IconButton";
 
 export default function Modal({ title, children, onClose }) {
   useEffect(() => {
@@ -16,26 +17,24 @@ export default function Modal({ title, children, onClose }) {
       <button
         type="button"
         aria-label="Close dialog"
-        className="absolute inset-0 bg-ink/40"
+        className="absolute inset-0 bg-paper/70 backdrop-blur-sm"
         onClick={onClose}
       />
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="dialog-title"
-        className="relative z-10 w-full max-w-lg rounded-panel border border-line bg-white p-5 shadow-card"
+        className="relative z-10 w-full max-w-lg animate-ri-scale-in rounded-sheet border border-line-elevated bg-surface-elevated p-5 shadow-elevated"
       >
         <div className="mb-4 flex items-start justify-between gap-4">
-          <h2 id="dialog-title" className="text-base font-semibold text-ink">
+          <h2 id="dialog-title" className="text-base font-semibold tracking-tight text-ink">
             {title}
           </h2>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-sm text-ink-muted hover:text-ink"
-          >
-            Close
-          </button>
+          <IconButton label="Close" variant="ghost" onClick={onClose} className="h-8 w-8">
+            <span aria-hidden="true" className="text-lg leading-none">
+              ×
+            </span>
+          </IconButton>
         </div>
         {children}
       </div>

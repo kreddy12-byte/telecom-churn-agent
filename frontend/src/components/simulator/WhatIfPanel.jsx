@@ -33,7 +33,7 @@ export default function WhatIfPanel({
 
   return (
     <div className="space-y-5">
-      <p className="rounded-panel border border-line bg-slate-50 px-3 py-2 text-xs text-ink-muted">
+      <p className="rounded-panel border border-line bg-surface-muted px-3 py-2 text-xs text-ink-muted">
         Model-based what-if estimate — not a causal prediction.
       </p>
 
@@ -102,7 +102,7 @@ export default function WhatIfPanel({
                 type="button"
                 onClick={() => onSelect(scenario.scenario_id)}
                 className={`block w-full rounded-panel border px-3 py-2 text-left ${
-                  active ? "border-accent bg-accent-soft" : "border-line bg-white hover:bg-slate-50"
+                  active ? "border-accent bg-accent-soft" : "border-line bg-paper-raised hover:bg-surface-hover"
                 }`}
               >
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -122,7 +122,7 @@ export default function WhatIfPanel({
                 {scenario.description ? (
                   <p className="mt-1 text-xs text-ink-muted">{scenario.description}</p>
                 ) : null}
-                <div className="mt-2 h-1.5 bg-slate-100">
+                <div className="mt-2 h-1.5 bg-surface-interactive">
                   <div
                     className="h-1.5 bg-accent"
                     style={{

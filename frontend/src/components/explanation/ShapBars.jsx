@@ -15,11 +15,11 @@ export default function ShapBars({ drivers }) {
     <div>
       <div className="mb-3 flex flex-wrap gap-4 text-xs text-ink-muted">
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-2 w-3 bg-rose-600" aria-hidden="true" />
+          <span className="h-2 w-3 rounded-sm bg-risk-high" aria-hidden="true" />
           Increases churn risk
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-2 w-3 bg-emerald-700" aria-hidden="true" />
+          <span className="h-2 w-3 rounded-sm bg-risk-low" aria-hidden="true" />
           Decreases churn risk
         </span>
       </div>
@@ -44,10 +44,10 @@ export default function ShapBars({ drivers }) {
                   </span>
                 </div>
               </div>
-              <div className="relative h-2 bg-slate-100">
-                <div className="absolute inset-y-0 left-1/2 w-px bg-slate-300" aria-hidden="true" />
+              <div className="relative h-2 overflow-hidden rounded-full bg-surface-interactive">
+                <div className="absolute inset-y-0 left-1/2 w-px bg-line-elevated" aria-hidden="true" />
                 <div
-                  className={`absolute top-0 h-2 ${increases ? "left-1/2 bg-rose-600" : "right-1/2 bg-emerald-700"}`}
+                  className={`absolute top-0 h-2 rounded-full ${increases ? "left-1/2 bg-risk-high" : "right-1/2 bg-risk-low"}`}
                   style={{ width }}
                 />
               </div>

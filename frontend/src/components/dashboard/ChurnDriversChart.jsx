@@ -24,7 +24,7 @@ export default function ChurnDriversChart({ drivers }) {
                   {magnitude.toFixed(3)}
                 </span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+              <div className="h-2 overflow-hidden rounded-full bg-surface-interactive">
                 <div
                   className="h-full bg-accent"
                   style={{ width }}

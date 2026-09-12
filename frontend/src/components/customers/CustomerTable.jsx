@@ -23,7 +23,7 @@ export default function CustomerTable({ items }) {
             const prediction = row.latest_prediction;
             return (
               <tr key={row.customer_id}>
-                <td className="font-medium">
+                <td className="font-semibold">
                   <Link
                     to={`/customers/${row.customer_id}`}
                     className="text-accent hover:underline"
@@ -38,7 +38,7 @@ export default function CustomerTable({ items }) {
                 <td className="text-right tabular-nums text-ink-muted">
                   {formatMoney(row.monthly_charges)}
                 </td>
-                <td className="text-right tabular-nums font-medium">
+                <td className="text-right tabular-nums font-semibold text-ink">
                   {prediction ? formatPercent(prediction.churn_probability) : "—"}
                 </td>
                 <td>
@@ -80,7 +80,7 @@ export function PriorityRankingTable({ items }) {
         <tbody>
           {items.map((row) => (
             <tr key={row.customer_id}>
-              <td className="font-medium">
+              <td className="font-semibold">
                 <Link
                   to={`/customers/${row.customer_id}`}
                   className="text-accent hover:underline"
@@ -88,7 +88,7 @@ export function PriorityRankingTable({ items }) {
                   {row.customer_id}
                 </Link>
               </td>
-              <td className="text-right tabular-nums font-medium">
+              <td className="text-right tabular-nums font-semibold text-ink">
                 {formatPercent(row.churn_probability)}
               </td>
               <td>
@@ -104,7 +104,7 @@ export function PriorityRankingTable({ items }) {
               <td>
                 <Link
                   to={`/customers/${row.customer_id}`}
-                  className="inline-flex items-center rounded-panel bg-accent px-2.5 py-1 text-xs font-semibold text-white hover:bg-accent-hover"
+                  className="inline-flex items-center rounded-control bg-accent px-2.5 py-1 text-xs font-semibold text-ink-inverse transition-colors hover:bg-accent-hover"
                 >
                   View intelligence
                   <span className="sr-only"> for {row.customer_id}</span>
@@ -134,7 +134,7 @@ export function HighRiskTable({ items }) {
         <tbody>
           {items.map((row) => (
             <tr key={row.customer_id}>
-              <td className="font-medium">
+              <td className="font-semibold">
                 <Link
                   to={`/customers/${row.customer_id}`}
                   className="text-accent hover:underline"
@@ -145,7 +145,7 @@ export function HighRiskTable({ items }) {
               <td>
                 <RiskBadge level={row.latest_prediction?.risk_level} />
               </td>
-              <td className="text-right tabular-nums font-medium">
+              <td className="text-right tabular-nums font-semibold">
                 {formatPercent(row.latest_prediction?.churn_probability)}
               </td>
               <td className="text-ink-muted">

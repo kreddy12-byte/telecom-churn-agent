@@ -18,7 +18,7 @@ export default function RecommendationPanel({ recommendation, loading, error }) 
     );
   }
   if (error) {
-    return <p className="text-sm text-rose-800">{error}</p>;
+    return <p className="text-sm text-danger">{error}</p>;
   }
   if (!recommendation) {
     return <p className="muted">No retention recommendation is available yet.</p>;
@@ -39,14 +39,14 @@ export default function RecommendationPanel({ recommendation, loading, error }) 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="rounded-panel border border-line bg-slate-50 px-2 py-0.5 text-[11px] font-semibold tracking-wide text-ink">
+        <span className="rounded-control border border-ai-border bg-ai-soft px-2 py-0.5 text-[11px] font-semibold tracking-wide text-accent">
           Recommended retention action
         </span>
-        <span className="rounded-panel border border-amber-300 bg-amber-50 px-2 py-0.5 text-[11px] font-semibold tracking-wide text-amber-900">
+        <span className="rounded-control border border-warning/35 bg-warning-soft px-2 py-0.5 text-[11px] font-semibold tracking-wide text-warning">
           Human approval required
         </span>
         {isFallback ? (
-          <span className="rounded-panel border border-line bg-white px-2 py-0.5 text-[11px] font-semibold tracking-wide text-ink-muted">
+          <span className="rounded-control border border-line bg-surface-muted px-2 py-0.5 text-[11px] font-semibold tracking-wide text-ink-muted">
             System-generated fallback reasoning
           </span>
         ) : null}
@@ -54,23 +54,17 @@ export default function RecommendationPanel({ recommendation, loading, error }) 
 
       <dl className="grid gap-4 sm:grid-cols-3">
         <div>
-          <dt className="text-[11px] font-semibold uppercase tracking-[0.07em] text-ink-faint">
-            Recommended action
-          </dt>
+          <dt className="meta">Recommended action</dt>
           <dd className="mt-1 text-sm font-semibold text-ink">{strategy || "—"}</dd>
         </div>
         <div>
-          <dt className="text-[11px] font-semibold uppercase tracking-[0.07em] text-ink-faint">
-            Confidence
-          </dt>
+          <dt className="meta">Confidence</dt>
           <dd className="mt-1 text-sm font-semibold text-ink">
             {recommendation.confidence || "—"}
           </dd>
         </div>
         <div>
-          <dt className="text-[11px] font-semibold uppercase tracking-[0.07em] text-ink-faint">
-            Priority
-          </dt>
+          <dt className="meta">Priority</dt>
           <dd className="mt-1">
             {priority ? (
               <RiskBadge level={priority} noun="priority" />
@@ -82,17 +76,13 @@ export default function RecommendationPanel({ recommendation, loading, error }) 
       </dl>
 
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-ink-faint">
-          Recommendation
-        </p>
+        <p className="meta">Recommendation</p>
         <p className="mt-1 text-sm leading-6 text-ink">{recommendation.recommendation}</p>
       </div>
 
       {reasons.length ? (
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-ink-faint">
-            Why this action was selected
-          </p>
+          <p className="meta">Why this action was selected</p>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm leading-6 text-ink">
             {reasons.map((item) => (
               <li key={item}>{item}</li>

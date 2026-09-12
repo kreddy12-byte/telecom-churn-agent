@@ -28,19 +28,19 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-paper px-4 py-10 text-ink">
       <div className="w-full max-w-md">
         <div className="mb-6 text-center">
-          <p className="text-[13px] font-semibold tracking-tight text-ink">Retention Intelligence</p>
-          <p className="mt-1 text-sm text-ink-muted">Telecom Customer Churn Decision Support</p>
+          <p className="text-[13px] font-semibold tracking-tight text-ink">Churn Intelligence</p>
+          <p className="mt-1 text-sm text-ink-muted">AI-powered customer risk platform</p>
         </div>
 
         <div className="surface p-6 sm:p-7">
           {sessionExpired ? (
-            <p className="mb-4 rounded-panel border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950">
+            <p className="mb-4 rounded-panel border border-warning/35 bg-warning-soft px-3 py-2 text-sm text-warning">
               Your session has expired. Please sign in again.
             </p>
           ) : null}
 
           {!isConfigured ? (
-            <p className="rounded-panel border border-line bg-slate-50 px-3 py-2 text-sm text-ink-muted">
+            <p className="rounded-panel border border-line bg-surface-muted px-3 py-2 text-sm text-ink-muted">
               Auth0 is not configured for this environment. Set{" "}
               <code className="text-xs">VITE_AUTH0_DOMAIN</code> and{" "}
               <code className="text-xs">VITE_AUTH0_CLIENT_ID</code>. See
@@ -76,7 +76,7 @@ export default function LoginPage() {
         </p>
         <p className="mt-6 text-center">
           <Link to="/" className="text-xs text-ink-faint hover:text-ink-muted">
-            Retention Intelligence
+            Churn Intelligence
           </Link>
         </p>
       </div>

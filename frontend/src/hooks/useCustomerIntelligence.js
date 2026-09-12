@@ -19,11 +19,8 @@ const SECTION_ERRORS = {
   actions: "Unable to load the current retention action.",
 };
 
-function sectionMessage(result, fallback) {
-  if (result.status === "fulfilled") {
-    return null;
-  }
-  return apiErrorMessage(result.reason) || fallback;
+function sectionMessage(reason, fallback) {
+  return apiErrorMessage(reason) || fallback;
 }
 
 export function useCustomerIntelligence(customerId) {
@@ -65,53 +62,69 @@ export function useCustomerIntelligence(customerId) {
       }
       setLoading({ profile: false, analysis: true });
 
-      const [predResult, explResult, recResult, whatIfResult, actionsResult] =
-        await Promise.allSettled([
-          predictCustomer(customerId),
-          getExplanation(customerId, 5),
-          getRecommendation(customerId, { detailed: true }),
-          runWhatIf(customerId, { use_llm: false }),
-          getActions({ customerId, limit: 20 }),
-        ]);
-
+      // Progressive: each section paints as soon as its request settles.
+      // Analysis loading clears only after every independent request finishes.
       const nextErrors = {};
 
-      if (predResult.status === "fulfilled") {
-        setPrediction(predResult.value);
-      } else if (!profile.latest_prediction) {
-        nextErrors.prediction = sectionMessage(predResult, SECTION_ERRORS.prediction);
-      }
+      const predictionTask = predictCustomer(customerId).then(
+        (value) => {
+          setPrediction(value);
+        },
+        (reason) => {
+          if (!profile.latest_prediction) {
+            nextErrors.prediction = sectionMessage(reason, SECTION_ERRORS.prediction);
+          }
+        }
+      );
 
-      if (explResult.status === "fulfilled") {
-        setExplanation(explResult.value);
-      } else {
-        nextErrors.explanation = sectionMessage(explResult, SECTION_ERRORS.explanation);
-      }
+      const explanationTask = getExplanation(customerId, 5).then(
+        (value) => {
+          setExplanation(value);
+        },
+        (reason) => {
+          nextErrors.explanation = sectionMessage(reason, SECTION_ERRORS.explanation);
+        }
+      );
 
-      if (recResult.status === "fulfilled") {
-        setRecommendation(recResult.value);
-      } else {
-        nextErrors.recommendation = sectionMessage(
-          recResult,
-          SECTION_ERRORS.recommendation
-        );
-      }
+      const recommendationTask = getRecommendation(customerId, { detailed: true }).then(
+        (value) => {
+          setRecommendation(value);
+        },
+        (reason) => {
+          nextErrors.recommendation = sectionMessage(
+            reason,
+            SECTION_ERRORS.recommendation
+          );
+        }
+      );
 
-      if (whatIfResult.status === "fulfilled") {
-        const simulation = whatIfResult.value;
-        setWhatIf(simulation);
-        setSelectedScenarioId(simulation.recommended_scenario_id);
-      } else {
-        nextErrors.whatIf = sectionMessage(whatIfResult, SECTION_ERRORS.whatIf);
-      }
+      const whatIfTask = runWhatIf(customerId, { use_llm: false }).then(
+        (simulation) => {
+          setWhatIf(simulation);
+          setSelectedScenarioId(simulation.recommended_scenario_id);
+        },
+        (reason) => {
+          nextErrors.whatIf = sectionMessage(reason, SECTION_ERRORS.whatIf);
+        }
+      );
 
-      if (actionsResult.status === "fulfilled") {
-        setActions(actionsResult.value.items || []);
-      } else {
-        nextErrors.actions = sectionMessage(actionsResult, SECTION_ERRORS.actions);
-      }
+      const actionsTask = getActions({ customerId, limit: 20 }).then(
+        (actionPage) => {
+          setActions(actionPage.items || []);
+        },
+        (reason) => {
+          nextErrors.actions = sectionMessage(reason, SECTION_ERRORS.actions);
+        }
+      );
 
-      setSectionErrors(nextErrors);
+      await Promise.all([
+        predictionTask,
+        explanationTask,
+        recommendationTask,
+        whatIfTask,
+        actionsTask,
+      ]);
+      setSectionErrors({ ...nextErrors });
     } catch (err) {
       setError(apiErrorMessage(err));
     } finally {

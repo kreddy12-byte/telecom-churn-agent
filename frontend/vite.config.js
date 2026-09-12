@@ -8,6 +8,30 @@ export default defineConfig({
     setupFiles: "./src/setupTests.js",
     globals: false,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) return undefined;
+          if (id.includes("recharts") || id.includes("d3-") || id.includes("victory-vendor")) {
+            return "charts";
+          }
+          if (id.includes("@auth0")) {
+            return "auth";
+          }
+          if (
+            id.includes("react-dom") ||
+            id.includes("react-router") ||
+            id.includes("/react/") ||
+            id.includes("\\react\\")
+          ) {
+            return "vendor";
+          }
+          return undefined;
+        },
+      },
+    },
+  },
   server: {
     // Bind IPv4 explicitly. Listening only on [::1] makes
     // http://127.0.0.1:5173 fail, which is what most Windows browsers

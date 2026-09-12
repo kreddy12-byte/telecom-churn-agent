@@ -1,12 +1,9 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { RISK_CHART_COLORS as TOKEN_RISK_COLORS, CHART_THEME } from "../../design/tokens";
 import { formatCount, formatShare } from "../../utils/format";
 
-// Same semantic colours as RiskBadge / the existing bar chart.
-export const RISK_CHART_COLORS = {
-  HIGH: "#be123c",
-  MEDIUM: "#b45309",
-  LOW: "#047857",
-};
+// Same semantic colours as RiskBadge / design tokens.
+export const RISK_CHART_COLORS = TOKEN_RISK_COLORS;
 
 export function riskRows(counts, total) {
   return [
@@ -38,14 +35,20 @@ export function RiskDistributionChart({ counts, total }) {
               innerRadius="58%"
               outerRadius="82%"
               paddingAngle={1.5}
-              stroke="#ffffff"
-              strokeWidth={1}
+              stroke="var(--ri-surface)"
+              strokeWidth={2}
             >
               {data.map((row) => (
                 <Cell key={row.key} fill={RISK_CHART_COLORS[row.key]} />
               ))}
             </Pie>
             <Tooltip
+              contentStyle={{
+                background: CHART_THEME.tooltipBg,
+                border: `1px solid ${CHART_THEME.tooltipBorder}`,
+                borderRadius: 8,
+                color: CHART_THEME.tooltipText,
+              }}
               formatter={(value, name) => [`${formatCount(value)} customers`, name]}
             />
           </PieChart>
@@ -88,9 +91,9 @@ export function RiskPriorityPanel({ counts, total }) {
               <span className="text-sm font-normal text-ink-muted">customers</span>
             </p>
             <p className="text-sm text-ink-muted">{row.shareLabel} of scored customers</p>
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-slate-100">
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-surface-interactive">
               <div
-                className="h-full"
+                className="h-full rounded-full"
                 style={{
                   width: `${Math.min(100, row.share * 100)}%`,
                   backgroundColor: RISK_CHART_COLORS[row.key],

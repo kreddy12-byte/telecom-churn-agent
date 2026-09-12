@@ -6,11 +6,14 @@
 // Components never call axios directly and never talk to an LLM provider.
 
 import apiClient, { apiErrorMessage } from "./apiClient";
+import { cachedRequest } from "./requestCache";
 
 export { apiErrorMessage };
 
 export function getHealth() {
-  return apiClient.get("/health").then((response) => response.data);
+  return cachedRequest("health", () =>
+    apiClient.get("/health").then((response) => response.data)
+  , 30_000);
 }
 
 export function getMe() {
@@ -56,7 +59,10 @@ export function runBatchPredictions() {
 }
 
 export function getModelInfo() {
-  return apiClient.get("/api/model").then((response) => response.data);
+  // Model metadata is static for a deployment; cache avoids AppShell + page double-fetch.
+  return cachedRequest("model-info", () =>
+    apiClient.get("/api/model").then((response) => response.data)
+  , 60_000);
 }
 
 export function getCustomers({ limit = 20, offset = 0, q, riskLevel } = {}) {

@@ -13,9 +13,11 @@ export default function RiskBadge({ level, noun = "risk", className = "" }) {
   const mark = MARK[level] || { symbol: "○", label: level };
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-panel border px-2 py-0.5 text-[11px] font-semibold tracking-wide ${riskClasses(level)} ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-control border px-2 py-0.5 text-[11px] font-semibold tracking-wide transition-colors duration-fast ease-ri ${riskClasses(level)} ${className}`}
     >
-      <span aria-hidden="true">{mark.symbol}</span>
+      <span aria-hidden="true" className="text-[9px] opacity-90">
+        {mark.symbol}
+      </span>
       <span>
         {level} {noun}
         <span className="sr-only"> ({mark.label})</span>

@@ -1,4 +1,5 @@
 import { Component } from "react";
+import Button from "./Button";
 
 export default class ErrorBoundary extends Component {
   constructor(props) {
@@ -23,18 +24,15 @@ export default class ErrorBoundary extends Component {
     if (this.state.failed) {
       return (
         <div className="flex min-h-screen items-center justify-center bg-paper px-6 text-ink">
-          <div className="max-w-md border border-line bg-white px-6 py-8 text-center">
-            <h1 className="text-lg font-semibold">Something went wrong</h1>
-            <p className="mt-2 text-sm text-ink-muted">
-              The workspace could not be displayed. Reload to try again.
+          <div className="surface-elevated max-w-md px-6 py-8 text-center">
+            <p className="meta mb-2">Workspace error</p>
+            <h1 className="text-lg font-semibold tracking-tight">Something went wrong</h1>
+            <p className="mt-2 text-sm leading-6 text-ink-muted">
+              The workspace could not be displayed. Reload to try again. Your data was not modified.
             </p>
-            <button
-              type="button"
-              onClick={this.handleReload}
-              className="mt-5 bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent-hover"
-            >
+            <Button variant="primary" className="mt-5" onClick={this.handleReload}>
               Reload
-            </button>
+            </Button>
           </div>
         </div>
       );

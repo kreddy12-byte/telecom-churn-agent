@@ -1,13 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import PageHeader from "../components/common/PageHeader";
 import ErrorBanner from "../components/common/ErrorBanner";
 import EmptyState from "../components/common/EmptyState";
-import { TableSkeleton } from "../components/common/Skeleton";
+import { TableSkeleton, KpiSkeleton } from "../components/common/Skeleton";
 import StatusBadge from "../components/common/StatusBadge";
+import MetricCard from "../components/common/MetricCard";
 import Button from "../components/common/Button";
-import { formatDate, formatPageRange, strategyLabel } from "../utils/format";
-import { apiErrorMessage, getActions } from "../services/api";
+import Badge from "../components/common/Badge";
+import { formatCount, formatDate, formatPageRange, strategyLabel } from "../utils/format";
+import { apiErrorMessage, getActions, getOverview } from "../services/api";
 
 const FILTERS = ["", "PENDING", "APPROVED", "MODIFIED", "REJECTED"];
 const PAGE_SIZE = 20;
@@ -16,32 +18,103 @@ export default function Actions() {
   const [status, setStatus] = useState("");
   const [offset, setOffset] = useState(0);
   const [data, setData] = useState(null);
+  const [overview, setOverview] = useState(null);
   const [error, setError] = useState(null);
 
   function load() {
     setError(null);
-    getActions({ status: status || undefined, limit: PAGE_SIZE, offset })
+    return getActions({ status: status || undefined, limit: PAGE_SIZE, offset })
       .then(setData)
       .catch((err) => setError(apiErrorMessage(err)));
   }
 
   useEffect(() => {
-    load();
+    let cancelled = false;
+    setError(null);
+    getActions({ status: status || undefined, limit: PAGE_SIZE, offset })
+      .then((next) => {
+        if (!cancelled) setData(next);
+      })
+      .catch((err) => {
+        if (!cancelled) setError(apiErrorMessage(err));
+      });
+    return () => {
+      cancelled = true;
+    };
   }, [status, offset]);
 
+  useEffect(() => {
+    let cancelled = false;
+    getOverview()
+      .then((next) => {
+        if (!cancelled) setOverview(next);
+      })
+      .catch(() => {
+        if (!cancelled) setOverview(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const total = data?.meta?.total ?? 0;
+  const actionCounts = overview?.action_counts;
+  const pending = actionCounts?.PENDING ?? null;
+  const approved = actionCounts?.APPROVED ?? null;
+  const modified = actionCounts?.MODIFIED ?? null;
+  const rejected = actionCounts?.REJECTED ?? null;
+  const recorded =
+    pending != null && approved != null && modified != null && rejected != null
+      ? pending + approved + modified + rejected
+      : null;
+
+  const filterLabel = useMemo(
+    () => (status ? status : "All recorded decisions"),
+    [status]
+  );
 
   return (
-    <div>
+    <div className="space-y-5">
       <PageHeader
-        title="Retention actions"
-        description="Decisions recorded from Customer Intelligence. Approving a row does not contact a customer."
+        title="Retention Actions"
+        description="Prioritize customers and act on the strongest available retention opportunities."
       />
 
-      <div className="mb-4 flex flex-wrap gap-2">
+      {actionCounts ? (
+        <section aria-label="Action summary" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <MetricCard
+            label="Recorded decisions"
+            value={formatCount(recorded)}
+            hint="All retention reviews stored for reviewers."
+          />
+          <MetricCard
+            label="Pending"
+            value={formatCount(pending)}
+            hint="Awaiting human approval."
+            tone="medium"
+          />
+          <MetricCard
+            label="Approved"
+            value={formatCount(approved)}
+            hint="Accepted recommendations."
+            tone="low"
+          />
+          <MetricCard
+            label="Rejected / modified"
+            value={formatCount((rejected || 0) + (modified || 0))}
+            hint="Rejected or changed by a reviewer."
+          />
+        </section>
+      ) : !error && !data ? (
+        <KpiSkeleton count={4} />
+      ) : null}
+
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="meta mr-1">Status</span>
         {FILTERS.map((value) => (
           <Button
             key={value || "all"}
+            size="sm"
             variant={status === value ? "primary" : "secondary"}
             onClick={() => {
               setStatus(value);
@@ -51,6 +124,9 @@ export default function Actions() {
             {value || "All"}
           </Button>
         ))}
+        <Badge tone="neutral" className="ml-auto">
+          {filterLabel}
+        </Badge>
       </div>
 
       {error ? <ErrorBanner message={error} onRetry={load} /> : null}
@@ -68,7 +144,7 @@ export default function Actions() {
             <thead>
               <tr>
                 <th>Customer</th>
-                <th>Strategy</th>
+                <th>Recommended action</th>
                 <th>Decision</th>
                 <th>Reviewer</th>
                 <th>Timestamp</th>
@@ -85,18 +161,18 @@ export default function Actions() {
                       {row.customer_id}
                     </Link>
                   </td>
-                  <td className="max-w-sm text-ink-muted">
+                  <td className="max-w-sm">
                     <p className="font-medium text-ink">{strategyLabel(row.strategy_id)}</p>
-                    <p className="mt-0.5 line-clamp-2">{row.recommendation}</p>
+                    <p className="mt-0.5 line-clamp-2 text-ink-muted">{row.recommendation}</p>
                   </td>
                   <td>
                     <StatusBadge status={row.status} />
                   </td>
                   <td className="max-w-xs text-ink-muted">
-                    <p>{row.reviewed_by_name || "—"}</p>
+                    <p className="text-ink">{row.reviewed_by_name || "—"}</p>
                     <p className="text-xs">{row.reviewed_by_email || "—"}</p>
                     {row.reviewer_note ? (
-                      <p className="mt-1 text-xs">{row.reviewer_note}</p>
+                      <p className="mt-1 text-xs text-ink-muted">{row.reviewer_note}</p>
                     ) : null}
                   </td>
                   <td className="whitespace-nowrap text-ink-muted">
@@ -111,7 +187,7 @@ export default function Actions() {
       ) : null}
 
       {data ? (
-        <div className="mt-4 flex justify-between text-sm text-ink-muted">
+        <div className="flex flex-wrap justify-between gap-3 text-sm text-ink-muted">
           <p>{formatPageRange(total, offset, PAGE_SIZE)}</p>
           <div className="flex gap-2">
             <Button disabled={offset === 0} onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}>

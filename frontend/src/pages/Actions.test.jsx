@@ -2,16 +2,22 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import Actions from "./Actions";
-import { getActions } from "../services/api";
+import { getActions, getOverview } from "../services/api";
 
 vi.mock("../services/api", () => ({
   apiErrorMessage: (err) => err.message || "Unable to load.",
   getActions: vi.fn(),
+  getOverview: vi.fn(),
 }));
 
 describe("Retention actions", () => {
   beforeEach(() => {
     getActions.mockReset();
+    getOverview.mockReset();
+    getOverview.mockResolvedValue({
+      customer_count: 10,
+      action_counts: { PENDING: 2, APPROVED: 1, MODIFIED: 0, REJECTED: 1 },
+    });
   });
 
   it("shows an action recorded from customer intelligence", async () => {
@@ -48,6 +54,7 @@ describe("Retention actions", () => {
     expect(screen.getByText("Ada Reviewer")).toBeInTheDocument();
     expect(screen.getByRole("columnheader", { name: "Decision" })).toBeInTheDocument();
     expect(screen.getAllByText("APPROVED").length).toBeGreaterThan(0);
+    expect(await screen.findByText("Pending")).toBeInTheDocument();
   });
 
   it("shows a useful error when the action list fails", async () => {

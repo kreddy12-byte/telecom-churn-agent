@@ -79,34 +79,34 @@ export default function DecisionPanel({
       {decided && currentAction ? (
         <div
           role="status"
-          className="rounded-panel border border-emerald-200 bg-emerald-50 px-4 py-3"
+          className="rounded-panel border border-success/35 bg-success-soft px-4 py-3"
         >
-          <p className="text-sm font-semibold text-emerald-950">
+          <p className="text-sm font-semibold text-success">
             {CONFIRMATION[currentAction.status] || "Retention action recorded"}
           </p>
           <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
             <div>
-              <dt className="text-xs text-emerald-900/70">Action</dt>
-              <dd className="mt-0.5 text-emerald-950">
+              <dt className="text-xs text-ink-muted">Action</dt>
+              <dd className="mt-0.5 text-ink">
                 {strategyLabel(currentAction.strategy_id)}
               </dd>
             </div>
             <div>
-              <dt className="text-xs text-emerald-900/70">Customer</dt>
-              <dd className="mt-0.5 text-emerald-950">{currentAction.customer_id}</dd>
+              <dt className="text-xs text-ink-muted">Customer</dt>
+              <dd className="mt-0.5 text-ink">{currentAction.customer_id}</dd>
             </div>
             <div>
-              <dt className="text-xs text-emerald-900/70">Reviewer</dt>
-              <dd className="mt-0.5 text-emerald-950">
+              <dt className="text-xs text-ink-muted">Reviewer</dt>
+              <dd className="mt-0.5 text-ink">
                 {currentAction.reviewed_by_name || currentAction.reviewed_by_email || "—"}
               </dd>
             </div>
             <div>
-              <dt className="text-xs text-emerald-900/70">Timestamp</dt>
-              <dd className="mt-0.5 text-emerald-950">{formatDate(currentAction.updated_at)}</dd>
+              <dt className="text-xs text-ink-muted">Timestamp</dt>
+              <dd className="mt-0.5 text-ink">{formatDate(currentAction.updated_at)}</dd>
             </div>
             <div>
-              <dt className="text-xs text-emerald-900/70">Status</dt>
+              <dt className="text-xs text-ink-muted">Status</dt>
               <dd className="mt-0.5">
                 <StatusBadge status={currentAction.status} />
               </dd>

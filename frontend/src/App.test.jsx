@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import App from "./App";
 import { getMe } from "./services/api";
+import { clearRequestCache } from "./services/requestCache";
 
 const logout = vi.fn();
 
@@ -92,6 +93,7 @@ vi.mock("./services/api", () => ({
 describe("application shell", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    clearRequestCache();
     authState.isAuthenticated = true;
     authState.isLoading = false;
     authState.user = {
@@ -115,16 +117,18 @@ describe("application shell", () => {
         <App />
       </MemoryRouter>
     );
-    expect(await screen.findByText("Retention Intelligence")).toBeInTheDocument();
+    expect(await screen.findByText("Churn Intelligence")).toBeInTheDocument();
     const nav = screen.getByRole("navigation", { name: "Primary" });
     expect(within(nav).getByRole("link", { name: "Overview" })).toBeInTheDocument();
-    expect(within(nav).getByRole("link", { name: "Customers" })).toBeInTheDocument();
-    expect(within(nav).getByRole("link", { name: "Retention actions" })).toBeInTheDocument();
-    expect(within(nav).getByRole("link", { name: "Model information" })).toBeInTheDocument();
+    expect(within(nav).getByRole("link", { name: "Customer Intelligence" })).toBeInTheDocument();
+    expect(within(nav).getByRole("link", { name: "Retention Actions" })).toBeInTheDocument();
+    expect(within(nav).getByRole("link", { name: "Batch Analysis" })).toBeInTheDocument();
+    expect(within(nav).getByRole("link", { name: "Model Intelligence" })).toBeInTheDocument();
+    expect(within(nav).getByRole("link", { name: "Account" })).toBeInTheDocument();
     expect(await screen.findByText("REVIEWER")).toBeInTheDocument();
   });
 
-  it("shows the authenticated user profile in the top bar", async () => {
+  it("shows the authenticated user profile in the application shell", async () => {
     render(
       <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <App />
@@ -157,7 +161,7 @@ describe("application shell", () => {
     expect(screen.getByText("Sam Signup")).toBeInTheDocument();
   });
 
-  it("shows ADMIN in the top bar when /api/me returns ADMIN", async () => {
+  it("shows ADMIN in the shell when /api/me returns ADMIN", async () => {
     getMe.mockResolvedValue({
       sub: "auth0|admin",
       name: "Ada Reviewer",

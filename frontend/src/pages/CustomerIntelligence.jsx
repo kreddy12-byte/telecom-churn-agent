@@ -7,6 +7,7 @@ import PageHeader from "../components/common/PageHeader";
 import RiskBadge from "../components/common/RiskBadge";
 import SectionCard from "../components/common/SectionCard";
 import WorkflowStrip from "../components/common/WorkflowStrip";
+import { CustomerIntelligenceSkeleton } from "../components/common/Skeleton";
 import ShapBars from "../components/explanation/ShapBars";
 import RecommendationPanel from "../components/retention/RecommendationPanel";
 import WhatIfPanel from "../components/simulator/WhatIfPanel";
@@ -51,16 +52,16 @@ export default function CustomerIntelligence() {
   const profileLoading = intel.loading.profile && !intel.customer && !intel.error;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       <div>
         <nav className="mb-2 flex flex-wrap items-center gap-3 text-sm" aria-label="Page">
-          <Link to="/" className="text-accent hover:underline">
+          <Link to="/" className="font-medium text-accent hover:underline">
             Back to Overview
           </Link>
           <span className="text-ink-faint" aria-hidden="true">
             ·
           </span>
-          <Link to="/customers" className="text-accent hover:underline">
+          <Link to="/customers" className="font-medium text-accent hover:underline">
             Back to Customers
           </Link>
         </nav>
@@ -76,116 +77,121 @@ export default function CustomerIntelligence() {
 
       {intel.error ? <ErrorBanner message={intel.error} onRetry={intel.reload} /> : null}
       {profileLoading ? (
-        <p className="muted" role="status">
-          Loading customer…
-        </p>
+        <CustomerIntelligenceSkeleton />
       ) : null}
 
       {intel.customer ? (
         <>
-          <section className="surface grid gap-6 px-5 py-5 lg:grid-cols-[16rem_1fr]">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
-                Churn probability
-              </p>
-              <p className="mt-2 text-4xl font-semibold tabular-nums tracking-tight">
-                {formatPercent(probability)}
-              </p>
-              <p className="mt-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-faint">
-                Risk level
-              </p>
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                <RiskBadge level={risk} />
+          <section className="surface relative overflow-hidden px-5 py-5">
+            <div
+              className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full bg-accent/10 blur-3xl"
+              aria-hidden="true"
+            />
+            <div className="relative grid gap-6 lg:grid-cols-[14rem_1fr]">
+              <div className="rounded-panel border border-line bg-surface-muted/80 px-4 py-4">
+                <p className="meta">Churn probability</p>
+                <p className="mt-2 text-4xl font-semibold tabular-nums tracking-tight text-ink">
+                  {formatPercent(probability)}
+                </p>
+                <p className="meta mt-4">Risk level</p>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <RiskBadge level={risk} />
+                </div>
+                {version ? (
+                  <p className="mt-4 text-xs text-ink-faint">Model version {version}</p>
+                ) : null}
               </div>
-              {version ? (
-                <p className="mt-3 text-xs text-ink-faint">Model version {version}</p>
-              ) : null}
-            </div>
-            <div>
-              <h2 className="section-title">Customer</h2>
-              <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {PROFILE_PRIMARY.map(([label, read]) => (
-                  <div key={label}>
-                    <dt className="text-xs text-ink-faint">{label}</dt>
-                    <dd className="mt-0.5 text-sm text-ink">{read(intel.customer) || "—"}</dd>
-                  </div>
-                ))}
-              </dl>
-              <button
-                type="button"
-                className="mt-3 text-sm text-accent hover:underline"
-                onClick={() => setShowFull((value) => !value)}
-              >
-                {showFull ? "Hide full profile" : "View full profile"}
-              </button>
-              {showFull ? (
+              <div>
+                <h2 className="section-title">Customer</h2>
                 <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  {PROFILE_FULL.map(([label, read]) => (
+                  {PROFILE_PRIMARY.map(([label, read]) => (
                     <div key={label}>
                       <dt className="text-xs text-ink-faint">{label}</dt>
-                      <dd className="mt-0.5 text-sm text-ink">{read(intel.customer) || "—"}</dd>
+                      <dd className="mt-0.5 text-sm font-medium text-ink">
+                        {read(intel.customer) || "—"}
+                      </dd>
                     </div>
                   ))}
                 </dl>
-              ) : null}
+                <button
+                  type="button"
+                  className="mt-4 text-sm font-medium text-accent hover:underline"
+                  onClick={() => setShowFull((value) => !value)}
+                >
+                  {showFull ? "Hide full profile" : "View full profile"}
+                </button>
+                {showFull ? (
+                  <dl className="mt-3 grid gap-3 border-t border-line pt-3 sm:grid-cols-2 lg:grid-cols-4">
+                    {PROFILE_FULL.map(([label, read]) => (
+                      <div key={label}>
+                        <dt className="text-xs text-ink-faint">{label}</dt>
+                        <dd className="mt-0.5 text-sm text-ink">
+                          {read(intel.customer) || "—"}
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : null}
+              </div>
             </div>
           </section>
 
-          <SectionCard
-            kicker="Predict"
-            title="Churn prediction"
-            description="This is the model's estimated probability of churn, not model accuracy."
-          >
-            {intel.sectionErrors.prediction && probability == null ? (
-              <p className="text-sm text-rose-800">{intel.sectionErrors.prediction}</p>
-            ) : probability == null && analysisLoading ? (
-              <p className="muted" role="status">
-                Loading churn prediction…
-              </p>
-            ) : probability == null ? (
-              <p className="muted">No prediction is available for this customer yet.</p>
-            ) : (
-              <dl className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <dt className="text-[11px] font-semibold uppercase tracking-[0.07em] text-ink-faint">
-                    Churn probability
-                  </dt>
-                  <dd className="mt-1 text-2xl font-semibold tabular-nums">
-                    {formatPercent(probability)}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-[11px] font-semibold uppercase tracking-[0.07em] text-ink-faint">
-                    Risk level
-                  </dt>
-                  <dd className="mt-1">
-                    <RiskBadge level={risk} />
-                  </dd>
-                </div>
-              </dl>
-            )}
-          </SectionCard>
+          <div className="grid gap-4 xl:grid-cols-2">
+            <SectionCard
+              kicker="Predict"
+              title="Churn prediction"
+              description="This is the model's estimated probability of churn, not model accuracy."
+              variant="model"
+            >
+              {intel.sectionErrors.prediction && probability == null ? (
+                <p className="text-sm text-danger">{intel.sectionErrors.prediction}</p>
+              ) : probability == null && analysisLoading ? (
+                <p className="muted" role="status">
+                  Loading churn prediction…
+                </p>
+              ) : probability == null ? (
+                <p className="muted">No prediction is available for this customer yet.</p>
+              ) : (
+                <dl className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <dt className="meta">Churn probability</dt>
+                    <dd className="mt-1 text-2xl font-semibold tabular-nums">
+                      {formatPercent(probability)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="meta">Risk level</dt>
+                    <dd className="mt-1">
+                      <RiskBadge level={risk} />
+                    </dd>
+                  </div>
+                </dl>
+              )}
+            </SectionCard>
 
-          <SectionCard
-            kicker="Explain"
-            title="Top churn drivers"
-            description="The strongest drivers that increased or decreased this customer's predicted churn risk."
-          >
-            {intel.sectionErrors.explanation && !intel.explanation ? (
-              <p className="text-sm text-rose-800">{intel.sectionErrors.explanation}</p>
-            ) : !intel.explanation && analysisLoading ? (
-              <p className="muted" role="status">
-                Loading SHAP explanation…
-              </p>
-            ) : (
-              <ShapBars drivers={intel.explanation?.top_drivers} />
-            )}
-          </SectionCard>
+            <SectionCard
+              kicker="Explain"
+              title="Top churn drivers"
+              description="The strongest drivers that increased or decreased this customer's predicted churn risk."
+              variant="shap"
+            >
+              {intel.sectionErrors.explanation && !intel.explanation ? (
+                <p className="text-sm text-danger">{intel.sectionErrors.explanation}</p>
+              ) : !intel.explanation && analysisLoading ? (
+                <p className="muted" role="status">
+                  Loading SHAP explanation…
+                </p>
+              ) : (
+                <ShapBars drivers={intel.explanation?.top_drivers} />
+              )}
+            </SectionCard>
+          </div>
 
           <SectionCard
             kicker="Recommend"
             title="Recommended retention action"
             description="AI-assisted decision support. A reviewer must approve any action."
+            variant="ai"
           >
             <RecommendationPanel
               recommendation={intel.recommendation}
@@ -214,9 +220,10 @@ export default function CustomerIntelligence() {
             kicker="Decide"
             title="Human decision"
             description="Approval records a reviewer's decision. It does not send a message or change the customer's plan."
+            variant="decision"
           >
             {intel.sectionErrors.actions && !intel.currentAction ? (
-              <p className="mb-3 text-sm text-rose-800">{intel.sectionErrors.actions}</p>
+              <p className="mb-3 text-sm text-danger">{intel.sectionErrors.actions}</p>
             ) : null}
             <DecisionPanel
               customerId={customerId}

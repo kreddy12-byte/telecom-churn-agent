@@ -27,10 +27,15 @@ export default function RetentionPriorityPanel() {
       </p>
       <ol className="mt-4 grid gap-3 sm:grid-cols-3">
         {steps.map((step) => (
-          <li key={step.n} className="border border-line bg-slate-50 px-3 py-3">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-ink-faint">
-              Step {step.n}
-            </p>
+          <li
+            key={step.n}
+            className="relative overflow-hidden rounded-panel border border-line bg-surface-muted px-4 py-3.5"
+          >
+            <span
+              className="pointer-events-none absolute inset-y-0 left-0 w-0.5 bg-accent"
+              aria-hidden="true"
+            />
+            <p className="meta">Step {step.n}</p>
             <p className="mt-1 text-sm font-semibold text-ink">{step.title}</p>
             <p className="mt-1 text-sm leading-5 text-ink-muted">{step.body}</p>
           </li>
