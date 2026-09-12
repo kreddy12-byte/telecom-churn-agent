@@ -1,85 +1,89 @@
-/* Design tokens — CSS custom properties for Retention Intelligence */
+/* Design tokens — CSS custom properties for Retention Intelligence (light premium) */
 
 :root {
   /* Background hierarchy */
-  --ri-bg-app: #070b16;
-  --ri-bg-app-rgb: 7 11 22;
-  --ri-bg-subtle: #0c1222;
-  --ri-bg-subtle-rgb: 12 18 34;
-  --ri-surface: #12192c;
-  --ri-surface-rgb: 18 25 44;
-  --ri-surface-elevated: #182238;
-  --ri-surface-elevated-rgb: 24 34 56;
-  --ri-surface-interactive: #1e2a44;
-  --ri-surface-interactive-rgb: 30 42 68;
-  --ri-surface-hover: #243052;
-  --ri-surface-hover-rgb: 36 48 82;
+  --ri-bg-app: #f7f8fc;
+  --ri-bg-app-rgb: 247 248 252;
+  --ri-bg-subtle: #f8f9fd;
+  --ri-bg-subtle-rgb: 248 249 253;
+  --ri-surface: #ffffff;
+  --ri-surface-rgb: 255 255 255;
+  --ri-surface-elevated: #ffffff;
+  --ri-surface-elevated-rgb: 255 255 255;
+  --ri-surface-interactive: #f8f9fd;
+  --ri-surface-interactive-rgb: 248 249 253;
+  --ri-surface-hover: #f0f2f8;
+  --ri-surface-hover-rgb: 240 242 248;
+
+  /* Soft tinted surfaces */
+  --ri-surface-lavender: #f3f1ff;
+  --ri-surface-blue: #eef4ff;
 
   /* Borders */
-  --ri-border: rgba(148, 163, 194, 0.12);
-  --ri-border-elevated: rgba(148, 163, 194, 0.22);
-  --ri-border-accent: rgba(124, 108, 255, 0.45);
+  --ri-border: #e7eaf2;
+  --ri-border-elevated: #d9dee9;
+  --ri-border-accent: rgba(99, 91, 255, 0.35);
 
   /* Text */
-  --ri-text: #e8ecf7;
-  --ri-text-rgb: 232 236 247;
-  --ri-text-secondary: #a9b3cc;
-  --ri-text-secondary-rgb: 169 179 204;
-  --ri-text-muted: #7b869f;
-  --ri-text-muted-rgb: 123 134 159;
-  --ri-text-disabled: #555e75;
-  --ri-text-inverse: #070b16;
+  --ri-text: #172033;
+  --ri-text-rgb: 23 32 51;
+  --ri-text-secondary: #64708a;
+  --ri-text-secondary-rgb: 100 112 138;
+  --ri-text-muted: #8a94a8;
+  --ri-text-muted-rgb: 138 148 168;
+  --ri-text-disabled: #a8b0c0;
+  --ri-text-inverse: #ffffff;
 
-  /* Accents (RGB channels enable Tailwind opacity modifiers) */
-  --ri-accent: #7c6cff;
-  --ri-accent-rgb: 124 108 255;
-  --ri-accent-hover: #9588ff;
-  --ri-accent-soft: rgba(124, 108, 255, 0.16);
-  --ri-accent-secondary: #3d8bfd;
-  --ri-accent-secondary-rgb: 61 139 253;
-  --ri-accent-glow: rgba(124, 108, 255, 0.28);
+  /* Accents */
+  --ri-accent: #635bff;
+  --ri-accent-rgb: 99 91 255;
+  --ri-accent-hover: #4f46e5;
+  --ri-accent-soft: #f3f1ff;
+  --ri-accent-secondary: #3b82f6;
+  --ri-accent-secondary-rgb: 59 130 246;
+  --ri-accent-glow: rgba(99, 91, 255, 0.14);
 
   /* Risk */
-  --ri-risk-high: #e85d75;
-  --ri-risk-high-rgb: 232 93 117;
-  --ri-risk-high-soft: rgba(232, 93, 117, 0.16);
-  --ri-risk-medium: #e8a54b;
-  --ri-risk-medium-rgb: 232 165 75;
-  --ri-risk-medium-soft: rgba(232, 165, 75, 0.16);
-  --ri-risk-low: #3dba8c;
-  --ri-risk-low-rgb: 61 186 140;
-  --ri-risk-low-soft: rgba(61, 186, 140, 0.16);
+  --ri-risk-high: #d1435b;
+  --ri-risk-high-rgb: 209 67 91;
+  --ri-risk-high-soft: #fdecee;
+  --ri-risk-medium: #c47d1a;
+  --ri-risk-medium-rgb: 196 125 26;
+  --ri-risk-medium-soft: #fff6e8;
+  --ri-risk-low: #1f9a72;
+  --ri-risk-low-rgb: 31 154 114;
+  --ri-risk-low-soft: #e8f8f1;
 
   /* Semantic status */
-  --ri-success: #3dba8c;
-  --ri-success-rgb: 61 186 140;
-  --ri-success-soft: rgba(61, 186, 140, 0.14);
-  --ri-warning: #e8a54b;
-  --ri-warning-rgb: 232 165 75;
-  --ri-warning-soft: rgba(232, 165, 75, 0.14);
-  --ri-danger: #e85d75;
-  --ri-danger-rgb: 232 93 117;
-  --ri-danger-soft: rgba(232, 93, 117, 0.14);
-  --ri-info: #3d8bfd;
-  --ri-info-rgb: 61 139 253;
-  --ri-info-soft: rgba(61, 139, 253, 0.14);
+  --ri-success: #1f9a72;
+  --ri-success-rgb: 31 154 114;
+  --ri-success-soft: #e8f8f1;
+  --ri-warning: #c47d1a;
+  --ri-warning-rgb: 196 125 26;
+  --ri-warning-soft: #fff6e8;
+  --ri-danger: #d1435b;
+  --ri-danger-rgb: 209 67 91;
+  --ri-danger-soft: #fdecee;
+  --ri-info: #3b82f6;
+  --ri-info-rgb: 59 130 246;
+  --ri-info-soft: #eef4ff;
 
   /* AI language */
-  --ri-ai-border: rgba(124, 108, 255, 0.35);
-  --ri-ai-soft: rgba(124, 108, 255, 0.08);
-  --ri-ai-glow: rgba(61, 139, 253, 0.12);
+  --ri-ai-border: rgba(99, 91, 255, 0.22);
+  --ri-ai-soft: #f3f1ff;
+  --ri-ai-glow: rgba(59, 130, 246, 0.1);
 
   /* Elevation */
-  --ri-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
-  --ri-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(124, 108, 255, 0.04);
-  --ri-shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.45), 0 0 40px rgba(124, 108, 255, 0.08);
-  --ri-shadow-glow: 0 0 32px rgba(124, 108, 255, 0.18);
+  --ri-shadow-sm: 0 1px 2px rgba(23, 32, 51, 0.04);
+  --ri-shadow-md: 0 4px 16px rgba(23, 32, 51, 0.05), 0 1px 2px rgba(23, 32, 51, 0.03);
+  --ri-shadow-lg: 0 12px 32px rgba(23, 32, 51, 0.07), 0 2px 6px rgba(23, 32, 51, 0.04);
+  --ri-shadow-glow: 0 8px 28px rgba(99, 91, 255, 0.12);
 
   /* Radius */
-  --ri-radius-sm: 6px;
-  --ri-radius-md: 10px;
-  --ri-radius-lg: 14px;
-  --ri-radius-xl: 18px;
+  --ri-radius-sm: 8px;
+  --ri-radius-md: 12px;
+  --ri-radius-lg: 16px;
+  --ri-radius-xl: 20px;
 
   /* Motion */
   --ri-ease: cubic-bezier(0.22, 1, 0.36, 1);

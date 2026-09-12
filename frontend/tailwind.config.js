@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Legacy semantic names remapped to the premium dark system
+        // Legacy semantic names remapped to the premium light system
         ink: {
           DEFAULT: "rgb(var(--ri-text-rgb) / <alpha-value>)",
           muted: "rgb(var(--ri-text-secondary-rgb) / <alpha-value>)",
@@ -98,8 +98,8 @@ export default {
         ],
       },
       fontSize: {
-        "kpi": ["1.75rem", { lineHeight: "1.1", letterSpacing: "-0.03em", fontWeight: "600" }],
-        "page": ["1.5rem", { lineHeight: "1.25", letterSpacing: "-0.025em", fontWeight: "600" }],
+        "kpi": ["1.875rem", { lineHeight: "1.1", letterSpacing: "-0.03em", fontWeight: "600" }],
+        "page": ["1.75rem", { lineHeight: "1.2", letterSpacing: "-0.03em", fontWeight: "600" }],
       },
       transitionTimingFunction: {
         ri: "var(--ri-ease)",

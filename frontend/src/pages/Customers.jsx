@@ -11,6 +11,7 @@ import ProgressBar from "../components/common/ProgressBar";
 import CustomerTable from "../components/customers/CustomerTable";
 import { formatCount, formatPageRange } from "../utils/format";
 import { apiErrorMessage, getCustomers } from "../services/api";
+import { riskToneBorder, riskToneSurface } from "../utils/risk";
 
 const PAGE_SIZE = 20;
 
@@ -101,7 +102,7 @@ export default function Customers() {
 
       <form
         onSubmit={applySearch}
-        className="surface flex flex-wrap items-end gap-3 px-4 py-3.5"
+        className="toolbar-surface flex flex-wrap items-end gap-3 px-4 py-4"
       >
         <label className="min-w-[12rem] flex-1 text-sm">
           <span className="label-text mb-1.5 block">Customer ID</span>
@@ -145,7 +146,10 @@ export default function Customers() {
             { key: "MEDIUM", label: "Medium risk on page", tone: "medium", value: pageRiskSummary.MEDIUM },
             { key: "LOW", label: "Low risk on page", tone: "low", value: pageRiskSummary.LOW },
           ].map((row) => (
-            <div key={row.key} className="surface px-4 py-3">
+            <div
+              key={row.key}
+              className={`surface border-l-[3px] px-4 py-3 ${riskToneBorder(row.tone)} ${riskToneSurface(row.tone)}`}
+            >
               <p className="meta">{row.label}</p>
               <p className="mt-1.5 text-lg font-semibold tabular-nums text-ink">
                 {formatCount(row.value)}

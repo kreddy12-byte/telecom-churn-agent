@@ -82,13 +82,13 @@ export default function CustomerIntelligence() {
 
       {intel.customer ? (
         <>
-          <section className="surface relative overflow-hidden px-5 py-5">
+          <section className="hero-intel px-5 py-5">
             <div
-              className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full bg-accent/10 blur-3xl"
+              className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full bg-accent/15 blur-3xl"
               aria-hidden="true"
             />
             <div className="relative grid gap-6 lg:grid-cols-[14rem_1fr]">
-              <div className="rounded-panel border border-line bg-surface-muted/80 px-4 py-4">
+              <div className="rounded-panel border border-line bg-paper-raised/90 px-4 py-4 shadow-sm">
                 <p className="meta">Churn probability</p>
                 <p className="mt-2 text-4xl font-semibold tabular-nums tracking-tight text-ink">
                   {formatPercent(probability)}

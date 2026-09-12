@@ -89,7 +89,7 @@ export default function UserMenu({
       {open ? (
         <div
           role="menu"
-          className={`absolute z-30 overflow-hidden rounded-panel border border-line-elevated bg-surface-elevated py-1 shadow-elevated animate-ri-scale-in ${menuPosition}`}
+          className={`absolute z-30 overflow-hidden rounded-panel border border-line-elevated bg-paper-raised py-1 shadow-elevated animate-ri-scale-in ${menuPosition}`}
         >
           <div className="border-b border-line px-3 py-2.5">
             <p className="truncate text-xs font-semibold text-ink">{displayName}</p>

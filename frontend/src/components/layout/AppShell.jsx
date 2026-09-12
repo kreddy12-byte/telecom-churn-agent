@@ -55,7 +55,7 @@ export default function AppShell() {
           navPanelId="app-sidebar"
           onOpenNav={() => setNavOpen((value) => !value)}
         />
-        <main className="flex-1 overflow-x-hidden px-4 py-5 sm:px-5 lg:px-7 lg:py-6">
+        <main className="flex-1 overflow-x-hidden px-4 py-6 sm:px-5 lg:px-8 lg:py-7">
           <div className="mx-auto w-full max-w-content">
             <RouteFrame>
               <Outlet context={{ profile }} />

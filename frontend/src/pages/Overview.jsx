@@ -263,7 +263,7 @@ export default function Overview() {
           predicted risk. Model ROC-AUC and accuracy are training metrics and
           live on{" "}
           <Link to="/model" className="text-accent hover:underline">
-            Model information
+            Model Intelligence
           </Link>
           .
           {latestScoredAt ? ` Latest scores recorded ${formatDate(latestScoredAt)}.` : ""}
@@ -289,6 +289,7 @@ export default function Overview() {
             kicker="Risk"
             title="Customer Risk Distribution"
             description="Share of scored customers in each predicted risk band. Latest prediction per customer."
+            elevated
           >
             <RiskDistributionChart
               counts={summary.risk_counts}
@@ -328,6 +329,7 @@ export default function Overview() {
           kicker="Priority queue"
           title="Top High-Risk Customers"
           description="Customers with the highest predicted churn probability. Open one to view intelligence and decide what to do."
+          elevated
           actions={
             <div className="flex flex-wrap gap-3 text-sm">
               <Link

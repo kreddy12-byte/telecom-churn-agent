@@ -23,8 +23,8 @@ export default function TopBar({
           : { label: "Offline", tone: "bg-danger", text: "API unavailable" };
 
   return (
-    <header className="sticky top-0 z-20 border-b border-line bg-surface/75 backdrop-blur-md">
-      <div className="flex items-center justify-between gap-3 px-4 py-2.5 sm:px-5 lg:px-6">
+    <header className="sticky top-0 z-20 border-b border-line bg-paper-raised/95 backdrop-blur-md">
+      <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5 lg:px-6">
         <div className="flex min-w-0 items-center gap-2.5">
           {onOpenNav ? (
             <IconButton

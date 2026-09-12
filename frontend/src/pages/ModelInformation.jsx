@@ -6,11 +6,9 @@ import { apiErrorMessage, getModelInfo } from "../services/api";
 
 function Metric({ label, value }) {
   return (
-    <div className="border border-line px-3 py-3">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.07em] text-ink-faint">
-        {label}
-      </p>
-      <p className="mt-1 text-lg font-semibold tabular-nums">{value}</p>
+    <div className="rounded-panel border border-line bg-surface-muted px-3.5 py-3 shadow-sm">
+      <p className="meta">{label}</p>
+      <p className="mt-1.5 text-lg font-semibold tabular-nums tracking-tight text-ink">{value}</p>
     </div>
   );
 }
@@ -37,14 +35,16 @@ export default function ModelInformation() {
   return (
     <div>
       <PageHeader
-        title="Model information"
+        title="Model Intelligence"
         description="Facts from the locked training artifacts. Paths and secrets are not shown."
       />
       {error ? <ErrorBanner message={error} onRetry={load} /> : null}
       {!info && !error ? <p className="muted">Loading model metadata…</p> : null}
       {info ? (
-        <div className="space-y-4">
+        <div className="space-y-5">
           <SectionCard
+            variant="model"
+            kicker="Model"
             title="Locked model"
             description="The predictor used for every score, explanation, and what-if estimate."
           >
@@ -106,6 +106,7 @@ export default function ModelInformation() {
           </SectionCard>
 
           <SectionCard
+            kicker="Evaluation"
             title="Held-out test metrics"
             description="Scores from the locked evaluation split. These are not live production KPIs."
           >
@@ -126,7 +127,7 @@ export default function ModelInformation() {
           </SectionCard>
 
           {info.selection_reason ? (
-            <SectionCard title="Why this model was selected">
+            <SectionCard kicker="Selection" title="Why this model was selected" elevated>
               <p className="text-sm leading-6 text-ink">{info.selection_reason}</p>
             </SectionCard>
           ) : null}

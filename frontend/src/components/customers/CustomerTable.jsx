@@ -104,7 +104,7 @@ export function PriorityRankingTable({ items }) {
               <td>
                 <Link
                   to={`/customers/${row.customer_id}`}
-                  className="inline-flex items-center rounded-control bg-accent px-2.5 py-1 text-xs font-semibold text-ink-inverse transition-colors hover:bg-accent-hover"
+                  className="inline-flex items-center rounded-control border border-accent/25 bg-accent-soft px-2.5 py-1 text-xs font-semibold text-accent transition-colors hover:bg-accent hover:text-ink-inverse"
                 >
                   View intelligence
                   <span className="sr-only"> for {row.customer_id}</span>

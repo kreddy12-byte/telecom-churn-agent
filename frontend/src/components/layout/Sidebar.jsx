@@ -17,7 +17,7 @@ function NavItem({ item, onNavigate, pathname }) {
       end={item.end}
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
-      className={`group relative flex items-center gap-3 rounded-control px-3 py-2 text-sm transition-colors duration-fast ease-ri focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
+      className={`group relative flex items-center gap-3 rounded-control px-3 py-2.5 text-sm transition-colors duration-fast ease-ri focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
         active
           ? "bg-accent-soft font-semibold text-accent"
           : "font-medium text-ink-muted hover:bg-surface-hover hover:text-ink"
@@ -76,7 +76,7 @@ export default function Sidebar({
         type="button"
         aria-label="Close navigation"
         tabIndex={open ? 0 : -1}
-        className={`fixed inset-0 z-30 bg-paper/65 backdrop-blur-sm transition-opacity duration-ri ease-ri lg:hidden ${
+        className={`fixed inset-0 z-30 bg-ink/30 backdrop-blur-[2px] transition-opacity duration-ri ease-ri lg:hidden ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
         onClick={onClose}
@@ -84,13 +84,13 @@ export default function Sidebar({
 
       <aside
         id="app-sidebar"
-        className={`fixed inset-y-0 left-0 z-40 flex w-[16.5rem] shrink-0 flex-col border-r border-line bg-surface/95 shadow-sm backdrop-blur-md transition-transform duration-ri ease-ri lg:static lg:z-0 lg:translate-x-0 lg:shadow-none ${
-          open ? "translate-x-0" : "-translate-x-full"
+        className={`fixed inset-y-0 left-0 z-40 flex w-[16.5rem] shrink-0 flex-col border-r border-line bg-paper-raised transition-transform duration-ri ease-ri lg:static lg:z-0 lg:translate-x-0 ${
+          open ? "translate-x-0 shadow-elevated" : "-translate-x-full"
         }`}
       >
         <div className="relative overflow-hidden border-b border-line px-4 py-5">
           <div
-            className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-accent/15 blur-3xl"
+            className="pointer-events-none absolute -right-8 -top-10 h-28 w-28 rounded-full bg-accent/10 blur-3xl"
             aria-hidden="true"
           />
           <div className="relative flex items-center gap-3">
@@ -107,7 +107,7 @@ export default function Sidebar({
         </div>
 
         <nav
-          className="flex-1 space-y-6 overflow-y-auto px-2.5 py-4"
+          className="flex-1 space-y-6 overflow-y-auto px-3 py-4"
           aria-label="Primary"
           ref={firstLinkRef}
         >

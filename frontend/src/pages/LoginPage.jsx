@@ -25,14 +25,27 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-paper px-4 py-10 text-ink">
-      <div className="w-full max-w-md">
-        <div className="mb-6 text-center">
-          <p className="text-[13px] font-semibold tracking-tight text-ink">Churn Intelligence</p>
-          <p className="mt-1 text-sm text-ink-muted">AI-powered customer risk platform</p>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-paper px-4 py-10 text-ink">
+      <div
+        className="pointer-events-none absolute -left-24 top-0 h-64 w-64 rounded-full bg-accent/10 blur-3xl"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -right-16 bottom-10 h-56 w-56 rounded-full bg-accent-secondary/10 blur-3xl"
+        aria-hidden="true"
+      />
+      <div className="relative w-full max-w-md">
+        <div className="mb-8 text-center">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-panel bg-accent-soft text-sm font-bold text-accent ring-1 ring-accent/20 shadow-sm">
+            CI
+          </div>
+          <p className="text-xl font-semibold tracking-tight text-ink">Churn Intelligence</p>
+          <p className="mt-2 text-sm leading-6 text-ink-muted">
+            AI-powered customer risk platform
+          </p>
         </div>
 
-        <div className="surface p-6 sm:p-7">
+        <div className="surface-elevated p-6 sm:p-8">
           {sessionExpired ? (
             <p className="mb-4 rounded-panel border border-warning/35 bg-warning-soft px-3 py-2 text-sm text-warning">
               Your session has expired. Please sign in again.

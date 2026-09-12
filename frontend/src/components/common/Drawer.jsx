@@ -22,14 +22,14 @@ export default function Drawer({ title, children, onClose, side = "right" }) {
       <button
         type="button"
         aria-label="Close drawer"
-        className="absolute inset-0 bg-paper/70 backdrop-blur-sm"
+        className="absolute inset-0 bg-ink/35 backdrop-blur-[2px]"
         onClick={onClose}
       />
       <aside
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`absolute inset-y-0 ${sideClass} flex w-full max-w-md animate-ri-fade-in flex-col border-line-elevated bg-surface-elevated shadow-elevated`}
+        className={`absolute inset-y-0 ${sideClass} flex w-full max-w-md animate-ri-fade-in flex-col border-line-elevated bg-paper-raised shadow-elevated`}
       >
         <div className="flex items-center justify-between border-b border-line px-5 py-4">
           <h2 className="text-sm font-semibold text-ink">{title}</h2>
